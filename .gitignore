@@ -1,0 +1,26 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.venv/
+
+# Data files
+data/
+*.csv
+
+# Generated output
+output/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+# Freebuff tool metadata
+.freebuff/
