@@ -3,9 +3,10 @@ from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from awsglue.context import GlueContext
-from awsglue.job import Job1
+from awsglue.job import Job
 from datetime import datetime
 import pyspark.sql.functions as f
+
 
 ## @params: [JOB_NAME]
 args = getResolvedOptions(sys.argv, ['JOB_NAME','source_path', 'target_path'])
