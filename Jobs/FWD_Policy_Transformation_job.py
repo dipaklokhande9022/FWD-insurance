@@ -39,7 +39,7 @@ agent_df = read_csv_from_s3(agent_path,["agent_id", "agent_name", "region"])
 
 agent_df = agent_df.select("agent_id", "agent_name", "region")
 insurance_product_df = insurance_product_df.select("product_id", "product_name", "product_type", "product_category" )
-policy_df = policy_df.select("policy_id", "customer_id", "product_id", "agent_id", "policy_start_date", "premium_amount", "policy_status)
+policy_df = policy_df.select("policy_id", "customer_id", "product_id", "agent_id", "policy_start_date", "premium_amount", "policy_status")
 
 policy_df.show()
 insurance_product_df.show()
