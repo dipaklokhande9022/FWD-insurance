@@ -1,0 +1,5 @@
+agent_id,agent_code,agent_name,gender,date_of_birth,email,phone_number,branch_code,branch_name,city,region,agent_type,joining_date,agent_status,created_date,updated_date
+AGENT00001,AGT-BKK-001,Prasert Wongchai,Male,1980-04-12,prasert.wongchai@fwd-example.com,+66-81-100-0001,BR-BKK-001,Bangkok Central,Bangkok,Bangkok,FULL_TIME,2019-03-15,ACTIVE,2026-08-24T11:04:39.000Z,2026-08-24T11:04:39.000Z
+AGENT00002,AGT-CNX-001,Suda Rattanakul,Female,1987-09-25,suda.rattanakul@fwd-example.com,+66-81-100-0002,BR-CNX-001,Chiang Mai Branch,Chiang Mai,Chiang Mai,FULL_TIME,2020-07-10,ACTIVE,2026-08-24T11:04:39.000Z,2026-08-24T11:04:39.000Z
+AGENT00003,AGT-PKT-001,Narin Chaisiri,Male,1978-12-03,narin.chaisiri@fwd-example.com,+66-81-100-0003,BR-PKT-001,Phuket Branch,Phuket,Phuket,FULL_TIME,2018-11-20,ACTIVE,2026-08-24T11:04:39.000Z,2026-08-24T11:04:39.000Z
+AGENT00004,AGT-CBI-001,Mali Saengdao,Female,1989-06-18,mali.saengdao@fwd-example.com,+66-81-100-0004,BR-CBI-001,Chonburi Branch,Chonburi,Chonburi,FULL_TIME,2021-02-05,ACTIVE,2026-08-24T11:04:39.000Z,2026-08-24T11:04:39.000Z

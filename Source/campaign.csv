@@ -1,0 +1,6 @@
+campaign_id,campaign_name,campaign_type,campaign_channel,start_date,end_date,target_segment,target_product_id,campaign_budget,campaign_status,created_timestamp
+CAM001,Health Renewal Drive,RENEWAL,CALL,2026-05-01,2026-05-31,Existing Customers,PROD002,250000,COMPLETED,2026-04-25T08:00:00.000Z
+CAM002,Family Protection Campaign,ACQUISITION,SMS,2026-06-01,2026-06-30,Family,PROD004,300000,COMPLETED,2026-05-25T08:00:00.000Z
+CAM003,Wealth Builder Campaign,UPSELL,EMAIL,2026-07-01,2026-07-31,Affluent,PROD003,400000,COMPLETED,2026-06-25T08:00:00.000Z
+CAM004,Premium Recovery Drive,COLLECTION,CALL,2026-08-01,2026-08-31,Overdue Customers,PROD001,200000,ACTIVE,2026-07-25T08:00:00.000Z
+CAM005,Retirement Planning Campaign,UPSELL,EMAIL,2026-08-01,2026-08-31,Young Professional,PROD005,350000,ACTIVE,2026-07-26T08:00:00.000Z

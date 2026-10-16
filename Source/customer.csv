@@ -1,0 +1,7 @@
+customer_id,customer_name,gender,date_of_birth,age,city,region,customer_segment,registration_date,customer_status,created_date,updated_date
+CUST00001,Anan Chaiyaporn,Male,1982-05-14,44,Bangkok,Bangkok,Affluent,2023-02-10,ACTIVE,2026-08-24T10:58:43.000Z,2026-08-24T10:58:43.000Z
+CUST00002,Nok Srisuk,Female,1991-08-22,35,Chiang Mai,Chiang Mai,Young Professional,2022-11-18,ACTIVE,2026-08-24T10:58:43.000Z,2026-08-24T10:58:43.000Z
+CUST00003,Somchai Prasert,Male,1975-03-10,51,Phuket,Phuket,Family,2024-03-12,ACTIVE,2026-08-24T10:58:43.000Z,2026-08-24T10:58:43.000Z
+CUST00004,Pimchanok Dee,Female,1988-11-05,38,Chonburi,Chonburi,Mass,2023-07-25,ACTIVE,2026-08-24T10:58:43.000Z,2026-08-24T10:58:43.000Z
+CUST00005,Kanya Boonmee,Female,1994-01-18,32,Bangkok,Bangkok,Young Professional,2024-01-14,ACTIVE,2026-08-25T10:58:43.000Z,2026-08-24T13:36:18.000Z
+CUST00006,Anan Chaiyaporn,Male,1982-05-14,44,Bangkok,Bangkok,Affluent,2023-02-10,ACTIVE,2026-08-25T10:58:43.000Z,2026-08-24T13:36:18.000Z

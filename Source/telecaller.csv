@@ -1,0 +1,6 @@
+telecaller_id,telecaller_name,team,region,supervisor_id,joining_date,telecaller_status,created_timestamp
+TC001,Anan,North Team,Bangkok,SUP001,2023-02-15,ACTIVE,2026-08-20T08:00:00.000Z
+TC002,Nok,Central Team,Bangkok,SUP001,2023-05-20,ACTIVE,2026-08-20T08:01:00.000Z
+TC003,Somchai,East Team,Chonburi,SUP002,2022-11-10,ACTIVE,2026-08-20T08:02:00.000Z
+TC004,Pim,South Team,Phuket,SUP003,2024-01-08,ACTIVE,2026-08-20T08:03:00.000Z
+TC005,Kanya,North Team,Chiang Mai,SUP004,2024-03-12,ACTIVE,2026-08-20T08:04:00.000Z
