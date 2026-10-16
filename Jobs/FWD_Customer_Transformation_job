@@ -5,11 +5,10 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from datetime import datetime
-import pyspark.sql.functions as f
+import pyspark.sql.functions as F
 
-
-## @params: [JOB_NAME]
-args = getResolvedOptions(sys.argv, ['JOB_NAME','source_path', 'target_path'])
+## @params: [JOB_NAME, source_path, target_path]
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'source_path', 'target_path'])
 
 sc = SparkContext()
 glueContext = GlueContext(sc)
@@ -17,24 +16,58 @@ spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args['JOB_NAME'], args)
 
+# Get current date and format months/days with zero-padding (e.g., '05' or '10')
 now = datetime.now()
-year = now.year
-month = now.month
-day = now.day
+year = str(now.year)
+month = f"{now.month:02d}"
+day = f"{now.day:02d}"
 
-source_folder = args.get["source_path"]
-target_path = args.get["target_path"]
+source_path = args.get("source_path")
+target_path = args.get("target_path")
 
-policy_path = f"{source_folder}/policy/year={year}/month={month}/day={day}/"
-insurance_product_path = f"{source_folder}/insurance_product/year={year}/month={month}/day={day}/"
-agent_path = f"{source_folder}/agent/year={year}/month={month}/day={day}/"
+# Constructs path: s3://bucket/path/year=2026/month=10/day=15
+actual_source_path = f"{source_path}/year={year}/month={month}/day={day}"
 
-def read_csv_from_s3(path):
-    return(
-        spark.read.fomrat("csv").option("header",True).option("inferSchema",True).load(path)
+# Read the CSV data
+Source_df = spark.read.format("csv") \
+    .option("header", True) \
+    .option("inferSchema", True) \
+    .load(actual_source_path)
+
+# 1. Fixed typo: withColumn
+# 2. Fixed logic: F.lit(month) instead of F.lit("month")
+Source_df = Source_df \
+    .withColumn("year", F.lit(year)) \
+    .withColumn("month", F.lit(month)) \
+    .withColumn("day", F.lit(day))
+
+
+#Transfom the data as needed
+
+Source_df = Source_df.dropDuplicates(["customer_name"])
+
+transformed_df = Source_df.withColumn("city",F.upper(F.col("city"))).withColumn("region",F.upper(F.col("region"))).withColumn("registration_date",F.to_date(F.col("registration_date"),"yyyy-MM-dd")).withColumn("customer_name",F.trim(F.col("customer_name")))
+transformed_df = transformed_df.filter(F.col("customer_status") == 'ACTIVE')
+
+
+transformed_df = transformed_df.withColumn(
+    "Custom_age",
+    F.floor(
+        F.months_between(
+            F.current_date(),
+            F.to_date(F.col("date_of_birth"), "yyyy-MM-dd")
+        ) / 12
     )
+)
 
-policy_df = read_csv_from_s3(policy_path)
-insurance_product_df = read_csv_from_s3(insurance_product_path)
-agent_df = read_csv_from_s3(agent_path)
+
+
+# Write out as Parquet (Removed .option("Header", True) as Parquet stores metadata natively)
+transformed_df.write.mode("overwrite") \
+    .format("csv") \
+    .partitionBy("year", "month", "day") \
+    .option("header",True)\
+    .option("partitionOverwriteMode", "dynamic")\
+    .save(target_path)
+
 job.commit()

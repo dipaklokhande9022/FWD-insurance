@@ -1,5 +1,5 @@
 product_id,product_code,product_name,product_category,product_type,description,premium_frequency,minimum_premium,maximum_premium,coverage_amount,policy_term_years,product_status,launch_date,end_date,created_date,updated_date
-PROD00001,FWD-LIFE-001,FWD Life Protection Plus,Life Insurance,Term Life,Life protection plan with flexible coverage options,ANNUAL,10000.00,100000.00,1000000.00,10,ACTIVE,2022-01-01,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
-PROD00002,FWD-SAVE-001,FWD Smart Savings,Savings,Endowment,Long-term savings and protection plan,QUARTERLY,5000.00,80000.00,750000.00,5,ACTIVE,2022-06-01,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
-PROD00003,FWD-FAMILY-001,FWD Family Secure,Life Insurance,Whole Life,Whole life insurance plan for family protection,MONTHLY,3000.00,120000.00,1500000.00,15,ACTIVE,2023-01-01,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
-PROD00004,FWD-HEALTH-001,FWD Health Protect,Health Insurance,Health,Health insurance with hospitalization coverage,ANNUAL,8000.00,60000.00,500000.00,20,ACTIVE,2023-07-01,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
+PROD00001,FWD-LIFE-001,FWD Life Protection Plus,Life Insurance,Term Life,Life protection plan with flexible coverage options,ANNUAL,10000,100000,1000000,10,ACTIVE,01-01-22,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
+PROD00002,FWD-SAVE-001,FWD Smart Savings,Savings,Endowment,Long-term savings and protection plan,QUARTERLY,5000,80000,750000,5,ACTIVE,01-06-22,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
+PROD00003,FWD-FAMILY-001,FWD Family Secure,Life Insurance,Whole Life,Whole life insurance plan for family protection,MONTHLY,3000,120000,1500000,15,ACTIVE,01-01-23,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
+PROD00004,FWD-HEALTH-001,FWD Health Protect,Health Insurance,Health,Health insurance with hospitalization coverage,ANNUAL,8000,60000,500000,20,ACTIVE,01-07-23,,2026-08-24T11:01:42.000Z,2026-08-24T11:01:42.000Z
