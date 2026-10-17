@@ -78,4 +78,4 @@ transformed_df.write \
     .option("partitionOverwriteMode", "dynamic") \
     .save(target_path)
 
-job.commit(1)
+job.commit()
