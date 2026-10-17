@@ -1,0 +1,143 @@
+[1mdiff --git a/Jobs/FWD_Premium_Payment_Transfomation_job.py b/Jobs/FWD_Premium_Payment_Transfomation_job.py[m
+[1mindex a696882..26fa376 100644[m
+[1m--- a/Jobs/FWD_Premium_Payment_Transfomation_job.py[m
+[1m+++ b/Jobs/FWD_Premium_Payment_Transfomation_job.py[m
+[36m@@ -7,60 +7,75 @@[m [mfrom awsglue.job import Job[m
+ import pyspark.sql.functions as f[m
+ from datetime import datetime[m
+ [m
+[31m-## @params: [JOB_NAME][m
+[31m-args = getResolvedOptions(sys.argv, ['JOB_NAME','source_path', 'target_path'])[m
+[32m+[m[32m## @params: [JOB_NAME, source_path, target_path][m
+[32m+[m[32margs = getResolvedOptions(sys.argv, ['JOB_NAME', 'source_path', 'target_path'])[m
+ [m
+ sc = SparkContext()[m
+ glueContext = GlueContext(sc)[m
+[32m+[m
+[32m+[m[32m# --- CRITICAL CONFIGURATION FOR DYNAMIC OVERWRITES ON S3 ---[m
+ spark = glueContext.spark_session[m
+[32m+[m[32mspark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")[m
+[32m+[m
+ job = Job(glueContext)[m
+ job.init(args['JOB_NAME'], args)[m
+ [m
+[32m+[m[32m# Get current date and format months/days with zero-padding[m
+ now = datetime.now()[m
+[31m-year = now.year[m
+[32m+[m[32myear = str(now.year)[m
+ month = f"{now.month:02d}"[m
+ day = f"{now.day:02d}"[m
+ [m
+ source_folder = args.get("source_path")[m
+ target_path = args.get("target_path")[m
+ [m
+[31m-premium_details_path =  f"{source_folder}/premium_details/year={year}/month={month}/day={day}/"[m
+[31m-policy_payment_schedule_path =  f"{source_folder}/policy_payment_schedule/year={year}/month={month}/day={day}/"[m
+[32m+[m[32mpremium_details_path = f"{source_folder}/premium_details/year={year}/month={month}/day={day}/"[m
+[32m+[m[32mpolicy_payment_schedule_path = f"{source_folder}/policy_payment_schedule/year={year}/month={month}/day={day}/"[m
+ [m
+ def read_csv_from_s3(path, columns=["*"]):[m
+[31m-    return([m
+[31m-        spark.read.format("csv").option("header",True).option("inferSchema",True).load(path).select(columns)[m
+[32m+[m[32m    return ([m
+[32m+[m[32m        spark.read.format("csv")[m
+[32m+[m[32m        .option("header", True)[m
+[32m+[m[32m        .option("inferSchema", True)[m
+[32m+[m[32m        .load(path)[m
+[32m+[m[32m        .select(columns)[m
+     )[m
+ [m
+ premium_details_df = read_csv_from_s3(premium_details_path)[m
+ policy_payment_schedule_df = read_csv_from_s3(policy_payment_schedule_path)[m
+ [m
+[32m+[m[32m# --- Transform Data ---[m
+ [m
+[32m+[m[32m# FIXED: Drop the duplicate timestamp column from the schedule table before joining[m
+[32m+[m[32mpps_cleaned_df = policy_payment_schedule_df.drop("api_updated_timestamp")[m
+ [m
+[31m-#transform data as needed [m
+[31m-transformed_df = ([m
+[31m-    premium_details_df.alias("pd")\[m
+[32m+[m[32mtransformed_df = premium_details_df.alias("pd") \[m
+     .join([m
+[31m-        policy_payment_schedule_df.alias("pps"),[m
+[32m+[m[32m        pps_cleaned_df.alias("pps"),  # Using the cleaned dataframe here[m
+         "policy_id",[m
+         "left"[m
+[31m-    )[m
+[31m-).select()[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-transformed_df = transformed_df.withColumn("year",f.lit(year)).withColumn("month",f.lit(month)).withColumn("day",f.lit(day))[m
+[31m-[m
+[31m-transformed_df.write\[m
+[31m-    .mode("overwrite")\[m
+[31m-    .partitionBy("year","month","day")\[m
+[31m-    .format("csv")\[m
+[31m-    .option("header",True)\[m
+[31m-    .option("partitionOverwriteMode", "dynamic")\[m
+[32m+[m[32m    ).select([m
+[32m+[m[32m        "pd.*",[m
+[32m+[m[32m        "pps.scheduled_amount",[m
+[32m+[m[32m        "pps.grace_period_days",[m
+[32m+[m[32m        "pps.lapse_date",[m
+[32m+[m[32m        "pps.schedule_status"[m
+[32m+[m[32m    ) \[m
+[32m+[m[32m    .withColumn("Overdue_days", f.datediff(f.current_date(), f.to_date(f.col("pd.due_date"), "yyyy-MM-dd")))[m
+[32m+[m
+[32m+[m[32m# Add partition metadata columns[m
+[32m+[m[32mtransformed_df = transformed_df \[m
+[32m+[m[32m    .withColumn("year", f.lit(year)) \[m
+[32m+[m[32m    .withColumn("month", f.lit(month)) \[m
+[32m+[m[32m    .withColumn("day", f.lit(day))[m
+[32m+[m
+[32m+[m[32m# --- Write Out Data ---[m
+[32m+[m[32mtransformed_df.write \[m
+[32m+[m[32m    .mode("overwrite") \[m
+[32m+[m[32m    .partitionBy("year", "month", "day") \[m
+[32m+[m[32m    .format("csv") \[m
+[32m+[m[32m    .option("header", True) \[m
+[32m+[m[32m    .option("partitionOverwriteMode", "dynamic") \[m
+     .save(target_path)[m
+[31m-    [m
+[31m-job.commit()[m
+\ No newline at end of file[m
+[32m+[m
+[32m+[m[32mjob.commit(1)[m
+[1mdiff --git a/Source/policy_payment_schedule.csv b/Source/policy_payment_schedule.csv[m
+[1mindex 01dac63..4d5ee55 100644[m
+[1m--- a/Source/policy_payment_schedule.csv[m
+[1m+++ b/Source/policy_payment_schedule.csv[m
+[36m@@ -1,6 +1,6 @@[m
+ schedule_id,policy_id,customer_id,payment_frequency,next_due_date,scheduled_amount,grace_period_days,lapse_date,schedule_status,api_updated_timestamp[m
+[31m-SCH0000001,POL000001,CUST00001,ANNUAL,2027-08-15,30000,30,2027-09-14,UPCOMING,2026-08-20T09:10:00.000Z[m
+[31m-SCH0000002,POL000002,CUST00002,QUARTERLY,2026-11-10,6000,30,2026-12-10,UPCOMING,2026-08-20T09:11:00.000Z[m
+[31m-SCH0000003,POL000003,CUST00003,MONTHLY,2026-08-20,3750,30,2026-09-19,OVERDUE,2026-08-20T09:12:00.000Z[m
+[31m-SCH0000004,POL000004,CUST00004,ANNUAL,2027-08-25,18000,30,2027-09-24,UPCOMING,2026-08-20T09:13:00.000Z[m
+[31m-SCH0000005,POL000005,CUST00005,ANNUAL,2027-08-05,60000,30,2027-09-04,UPCOMING,2026-08-20T09:14:00.000Z[m
+[32m+[m[32mSCH0000001,POL000001,CUST00001,ANNUAL,15-08-27,30000,30,14-09-27,UPCOMING,2026-08-20T09:10:00.000Z[m
+[32m+[m[32mSCH0000002,POL000002,CUST00002,QUARTERLY,10-11-26,6000,30,10-12-26,UPCOMING,2026-08-20T09:11:00.000Z[m
+[32m+[m[32mSCH0000003,POL000003,CUST00003,MONTHLY,20-08-26,3750,30,19-09-26,OVERDUE,2026-08-20T09:12:00.000Z[m
+[32m+[m[32mSCH0000004,POL000004,CUST00004,ANNUAL,25-08-27,18000,30,24-09-27,UPCOMING,2026-08-20T09:13:00.000Z[m
+[32m+[m[32mSCH0000005,POL000005,CUST00005,ANNUAL,05-08-27,60000,30,04-09-27,UPCOMING,2026-08-20T09:14:00.000Z[m
+[1mdiff --git a/Source/premium_details.csv b/Source/premium_details.csv[m
+[1mindex aa1848f..90f62a0 100644[m
+[1m--- a/Source/premium_details.csv[m
+[1m+++ b/Source/premium_details.csv[m
+[36m@@ -1,6 +1,6 @@[m
+ premium_id,policy_id,customer_id,due_date,payment_date,premium_due,amount_paid,outstanding_amount,payment_status,days_overdue,next_due_date,payment_method,api_updated_timestamp[m
+[31m-PREM000001,POL000001,CUST00001,2026-08-15,2026-08-14,30000,30000,0,PAID,0,2026-09-15,BANK_TRANSFER,2026-08-20T09:00:00.000Z[m
+[31m-PREM000002,POL000002,CUST00002,2026-08-10,2026-08-12,6000,6000,0,PAID,2,2026-11-10,CARD,2026-08-20T09:01:00.000Z[m
+[31m-PREM000003,POL000003,CUST00003,2026-07-20,,3750,0,3750,OVERDUE,31,2026-08-20,,2026-08-20T09:02:00.000Z[m
+[31m-PREM000004,POL000004,CUST00004,2026-08-25,,18000,0,18000,UPCOMING,0,2026-09-25,,2026-08-20T09:03:00.000Z[m
+[31m-PREM000005,POL000005,CUST00005,2026-08-05,2026-08-06,60000,30000,30000,PARTIALLY_PAID,1,2026-09-05,BANK_TRANSFER,2026-08-20T09:04:00.000Z[m
+[32m+[m[32mPREM000001,POL000001,CUST00001,15-08-26,14-08-26,30000,30000,0,PAID,0,15-09-26,BANK_TRANSFER,2026-08-20T09:00:00.000Z[m
+[32m+[m[32mPREM000002,POL000002,CUST00002,10-08-26,12-08-26,6000,6000,0,PAID,2,10-11-26,CARD,2026-08-20T09:01:00.000Z[m
+[32m+[m[32mPREM000003,POL000003,CUST00003,20-07-26,,3750,0,3750,OVERDUE,31,20-08-26,,2026-08-20T09:02:00.000Z[m
+[32m+[m[32mPREM000004,POL000004,CUST00004,25-08-26,,18000,0,18000,UPCOMING,0,25-09-26,,2026-08-20T09:03:00.000Z[m
+[32m+[m[32mPREM000005,POL000005,CUST00005,05-08-26,06-08-26,60000,30000,30000,PARTIALLY_PAID,1,05-09-26,BANK_TRANSFER,2026-08-20T09:04:00.000Z[m
