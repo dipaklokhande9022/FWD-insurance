@@ -27,8 +27,8 @@ source_folder = args.get("source_path")
 target_path = args.get("target_path")
 
 # Construct the actual source path based on the current date
-telecaller_path = f"{source_folder}/telecaller/year={year}/month={month}/day=16/"
-telecaller_activity_path = f"{source_folder}/telecaller_activity/year={year}/month={month}/day=16/"
+telecaller_path = f"{source_folder}/telecaller/year={year}/month={month}/day={day}/"
+telecaller_activity_path = f"{source_folder}/telecaller_activity/year={year}/month={month}/day={day}/"
 
 # Define a function to read CSV files from S3 with specified columns
 def read_csv_from_s3(path, columns=["*"]):

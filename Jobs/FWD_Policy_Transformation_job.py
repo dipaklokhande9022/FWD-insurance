@@ -24,7 +24,7 @@ day = f"{now.day:02d}"
 source_folder = args.get("source_path")
 target_path = args.get("target_path")
 
-policy_path =  f"{source_folder}/policy/year={year}/month={month}/day={day}/"
+policy_path =  f"{source_folder}/policy/year={year}/month={month}/day={day}"
 insurance_product_path =  f"{source_folder}/insurance_product/year={year}/month={month}/day={day}/"
 agent_path =  f"{source_folder}/agent/year={year}/month={month}/day={day}/"
 

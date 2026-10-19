@@ -15,7 +15,8 @@ args = getResolvedOptions(sys.argv, [
     "source_prefix",
     "table_list",
     "target_bucket",
-    "target_prefix"
+    "target_prefix",
+    "source_type"
 ])
 
 # Initialize Glue
@@ -31,12 +32,13 @@ source_bucket = args["source_bucket"].strip()
 source_prefix = args["source_prefix"].strip(" /")
 target_bucket = args["target_bucket"].strip()
 target_prefix = args["target_prefix"].strip(" /")
+source_type = args["source_type"].strip(" /")
 
 table_list = args["table_list"].split(",")
 
-# Get today's date
+# Get today's UTC date
 today = datetime.now(timezone.utc)
-date_folder = f"{today.day}-{today.month}-{today.year}"
+date_folder = f"16-{today.month:02d}-{today.year:02d}"
 
 try:
     for table in table_list:
@@ -48,7 +50,7 @@ try:
         # Source path
         source_path = (
             f"s3://{source_bucket}/{source_prefix}/"
-            f"{date_folder}/{table}.csv"
+            f"{source_type}/{date_folder}/{table}.csv"
         )
 
         print(f"Reading: {source_path}")
@@ -72,15 +74,14 @@ try:
 
         # Target path
         target_path = (
-            f"s3://{target_bucket}/{target_prefix}/{table}/"
+            f"s3://{target_bucket}/{target_prefix}/{source_type}/{table}/"
         )
 
-        print(f"Writing to: {target_path}")
-
-        # Write Parquet with partitions
+        # Write CSV with partitions
         (
             df.write
             .mode("overwrite")
+            .option("header", "true")
             .partitionBy("year", "month", "day")
             .csv(target_path)
         )

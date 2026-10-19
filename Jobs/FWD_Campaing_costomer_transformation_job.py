@@ -27,8 +27,8 @@ source_folder = args.get("source_path")
 target_path = args.get("target_path")
 
 # Construct the actual source path based on the current date
-campaign_path = f"{source_folder}/campaign/year={year}/month={month}/day=16/"
-campaign_customer_path = f"{source_folder}/campaign_customer/year={year}/month={month}/day=16/"
+campaign_path = f"{source_folder}/campaign/year={year}/month={month}/day={day}/"
+campaign_customer_path = f"{source_folder}/campaign_customer/year={year}/month={month}/day={day}/"
 
 # Define a function to read CSV files from S3 with specified columns
 def read_csv_from_s3(path, columns=["*"]):
